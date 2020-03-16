@@ -1,14 +1,18 @@
 package com.itcast.controller;
 
+import com.itcast.pojo.User;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MyController {
@@ -30,12 +34,18 @@ public class MyController {
     public String toLogin() {
         return "login";
     }
+    @RequestMapping("/noauth")
+    @ResponseBody
+    public String unauthorized() {
+        return "未经授权无法访问";
+    }
     @RequestMapping("/login")
     public String login(String username,String password,Model model) {
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
         try {
             subject.login(usernamePasswordToken);
+
             return  "index";
         } catch (UnknownAccountException e) {
             model.addAttribute("msg","用户名错误");

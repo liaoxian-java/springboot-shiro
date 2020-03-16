@@ -1,5 +1,6 @@
 package com.itcast.config;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,9 +26,14 @@ public class ShiroConfig {
         Map<String, String> stringStringMap = new LinkedHashMap<>();
 //        stringStringMap.put("/user/add","anon");
 //        stringStringMap.put("/user/update","authc");
-        stringStringMap.put("/user/*", "authc");
+        //授权,跳转未授权页面
+        stringStringMap.put("/user/add","perms[user:add]");
+        stringStringMap.put("/user/update","perms[user:update]");
+//        stringStringMap.put("/user/*", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(stringStringMap);
         shiroFilterFactoryBean.setLoginUrl("/toLogin");
+        //未授权页面
+        shiroFilterFactoryBean.setUnauthorizedUrl("/noauth");
         return shiroFilterFactoryBean;
     }
 
@@ -40,11 +46,12 @@ public class ShiroConfig {
         return securityManager;
     }
 
-    ;
-
     //创建Relam  ，自定义类
     @Bean
     public UserRelam userRelam() {
         return new UserRelam();
     }
+
+    //整合thymeleaf
+    @Bean public ShiroDialect shiroDialect() { return new ShiroDialect(); }
 }
